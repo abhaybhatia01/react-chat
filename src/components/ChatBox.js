@@ -10,6 +10,8 @@ import { db } from "../firebase";
 import Message from "./Message";
 import SendMessage from "./SendMessage";
 
+
+
 const ChatBox = () => {
   const scroll = useRef();
   const [messages, setMessages] = useState([]);
