@@ -2,6 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import {getMessaging,onMessage, getToken} from 'firebase/messaging';
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -21,3 +23,30 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+const messaging = getMessaging(app)
+
+const { REACT_APP_VAPID_KEY } = process.env
+const publicKey = REACT_APP_VAPID_KEY;
+
+export const gettoken = async (setTokenFound) => {
+  let currentToken = '';
+  try {
+    currentToken = await getToken(messaging,{vapidKey: publicKey});
+    if (currentToken) {
+      setTokenFound(true);
+    } else {
+      setTokenFound(false);
+    }
+  } catch (error) {
+    console.log('An error occurred while retrieving token.', error);
+  }
+  return currentToken;
+};
+
+export const onMessageListener = () =>
+  new Promise((resolve) => {
+    onMessage((payload) => {
+      resolve(payload);
+    });
+  });
